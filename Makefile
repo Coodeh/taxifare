@@ -1,7 +1,9 @@
 -include .env
 export
 
-.PHONY: run-api build-docker-local docker-run
+GAR_IMAGE_NAME = $(GCP_REGION)-docker.pkg.dev/$(GOOGLE_CLOUD_PROJECT)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
+
+.PHONY: run-api build-docker-local docker-run docker_build_cloud docker_push docker_deploy
 
 run-api:
 	uv run uvicorn api.fast:app --reload
@@ -12,3 +14,16 @@ build-docker-local:
 
 docker-run:
 	docker run --rm -p 8001:8080 --env-file .env ${DOCKER_IMAGE_NAME}:dev
+
+docker_build_cloud:
+	docker build --platform linux/amd64 -t $(GAR_IMAGE_NAME):latest .
+
+docker_push:
+	docker push $(GAR_IMAGE_NAME):latest
+
+docker_deploy:
+	gcloud run deploy ${CLOUD_RUN_SERVICE_NAME} \
+		--image ${GAR_IMAGE_NAME}:latest \
+		--allow-unauthenticated \
+		--env-vars-file .env \
+		--region ${GCP_REGION}
