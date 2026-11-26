@@ -13,3 +13,4 @@ wheels/
 .joblib
 .pkl
 models/
+.env
