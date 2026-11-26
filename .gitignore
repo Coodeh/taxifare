@@ -12,3 +12,4 @@ wheels/
 
 .joblib
 .pkl
+models/
