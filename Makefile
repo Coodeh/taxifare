@@ -10,10 +10,10 @@ run-api:
 
 
 build-docker-local:
-	docker build -t ${DOCKER_IMAGE_NAME}:dev .
+	docker build -t $(DOCKER_IMAGE_NAME):dev .
 
 docker-run:
-	docker run --rm -p 8001:8080 --env-file .env ${DOCKER_IMAGE_NAME}:dev
+	docker run --rm -p 8001:8080 --env-file .env $(DOCKER_IMAGE_NAME):dev
 
 docker_build_cloud:
 	docker build --platform linux/amd64 -t $(GAR_IMAGE_NAME):latest .
@@ -22,8 +22,12 @@ docker_push:
 	docker push $(GAR_IMAGE_NAME):latest
 
 docker_deploy:
-	gcloud run deploy ${CLOUD_RUN_SERVICE_NAME} \
-		--image ${GAR_IMAGE_NAME}:latest \
+	gcloud run deploy $(CLOUD_RUN_SERVICE_NAME) \
+		--image $(GAR_IMAGE_NAME):latest \
 		--allow-unauthenticated \
-		--env-vars-file .env \
-		--region ${GCP_REGION}
+		--region $(GCP_REGION) \
+		--project $(GOOGLE_CLOUD_PROJECT) \
+		--port 8080 \
+		--memory 1Gi \
+		--max-instances 1 \
+		--update-env-vars MODEL_PATH=$(MODEL_PATH)

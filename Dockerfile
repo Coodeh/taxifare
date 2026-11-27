@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY src src
 COPY api api
-COPY models models
+#COPY models models
 
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock

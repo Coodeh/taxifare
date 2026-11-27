@@ -1,9 +1,39 @@
+import io
 import joblib
 import pandas as pd
 
+from google.cloud import storage
+
+
 def load_model(model_path):
-    model = joblib.load(model_path)
+    """Load a model from a local file or Google Cloud Storage."""
+
+    model_path = str(model_path)
+
+    if model_path.startswith("gs://"):
+
+        bucket_name, blob_name = (
+            model_path[5:].split("/", 1)
+        )
+
+        client = storage.Client()
+
+        bucket = client.bucket(bucket_name)
+
+        blob = bucket.blob(blob_name)
+
+        model_bytes = blob.download_as_bytes()
+
+        model = joblib.load(
+            io.BytesIO(model_bytes)
+        )
+
+    else:
+
+        model = joblib.load(model_path)
+
     return model
+
 
 def predict(model,X):
     prediction = model.predict(X)

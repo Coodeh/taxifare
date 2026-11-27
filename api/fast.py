@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pathlib import Path
 
 import pandas as pd
+import os
 
 from taxifare.predict import load_model
 from taxifare.predict import predict as model_predict
@@ -9,13 +10,19 @@ from taxifare.predict import predict as model_predict
 
 app = FastAPI()
 
-MODEL_PATH = (
+LOCAL_MODEL_PATH = (
     Path(__file__).resolve().parent.parent
     / "models"
     / "linreg_pipeline.joblib"
 )
 
+MODEL_PATH = os.getenv(
+    "MODEL_PATH",
+    str(LOCAL_MODEL_PATH)
+)
+
 model = load_model(MODEL_PATH)
+
 
 
 @app.get("/")
