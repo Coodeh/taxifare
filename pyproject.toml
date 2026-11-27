@@ -21,6 +21,8 @@ dependencies = [
     "pandas<3",
     "scikit-learn>=1.9.1",
     "seaborn>=0.13.2",
+    "tensorflow>=2.21.0",
+    "python-multipart>=0.0.34",
 ]
 
 [project.scripts]
